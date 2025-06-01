@@ -1,103 +1,81 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import LoadingCenterSpinner from './LoadingCenterSpinner';
+import React, { useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getActiveRoomId, getBaseUrl } from '../utils/selectors';
+import { setUserConnectedToRoom, updateActiveRoom } from '../store/reducers/roomsReducer';
+
+import GamePage from './GamePage';
+import RoomsList from './RoomsList';
+import { io } from 'socket.io-client';
 
 const MainPage = () => {
     const dispatch = useDispatch();
 
-    const [searchValue, setSearchValue] = useState('');
-    const [isPageReady, setIsPageReady] = useState(false);
+    const baseUrl = useSelector(getBaseUrl);
+    const activeRoomId = useSelector(getActiveRoomId);
 
-    const filteredRooms = [];
+    const playerName = useMemo(() => {
+        const savedName = localStorage.getItem('MAFIA_PLAYER_GAME');
+        if (savedName) return savedName;
+
+        const names = ['Alex', 'Bob', 'Carl', 'Dave', 'Eve', 'Fred', 'Jane'];
+        const randomName = names[Math.floor(Math.random() * names.length)];
+        const randomHash = Math.random().toString(36).substring(2, 7);
+        const name = `${randomName}_${randomHash}`;
+        localStorage.setItem('MAFIA_PLAYER_GAME', name);
+
+        return name;
+    }, []);
+
+    const socket = useMemo(() => {
+        return io(baseUrl);
+    }, [baseUrl]);
 
     useEffect(() => {
-        //get rooms
-    }, []);
+        if (activeRoomId && playerName) {
+            socket.emit('join_room', { roomId: activeRoomId, playerName });
+
+            socket.on('game_update', (data = {}) => {
+                const { key, roomData = {} } = data || {};
+                const { id } = roomData || {};
+                console.log(data);
+
+                switch (key) {
+                    case 'player_connected':
+                    case 'player_disconnected': {
+                        dispatch(updateActiveRoom({ id, data: roomData }));
+                        break;
+                    }
+                    default: {
+                        break;
+                    }
+                }
+
+                dispatch(setUserConnectedToRoom(true));
+            });
+        }
+    }, [activeRoomId, playerName]);
 
     return (
         <div className="page">
             <div className="header">
                 <div>Mafia UA</div>
-                <div className="add-button-container">
-                    <button className="form-button" onClick={() => {
-                        // dispatch(setModal({ modalType:  }));
-                        console.log('create new room');
-                    }}>
-                        Create new room
-                    </button>
-                </div>
+                <div>{playerName}</div>
+                {activeRoomId ? (
+                    <div className="add-button-container">
+                        <button className="form-button" onClick={() => {
+                            socket.disconnect();
+                            window.location.reload();
+                        }}>
+                            Leave room
+                        </button>
+                    </div>
+                ) : null}
             </div>
             <div className="main-section">
-                {isPageReady
-                    ? <>
-                        <div className="search-section">
-                            <input type="text" value={searchValue} onChange={(e) => {
-                                setSearchValue(e.target.value);
-                            }} />
-                            <button className="form-button" onClick={() => {
-                                setSearchValue('');
-                            }}>
-                                Clear
-                            </button>
-                        </div>
-                        {filteredRooms.length
-                            ? (
-                                <div className="rooms-list">
-                                    <table>
-                                        <thead>
-                                        <tr>
-                                            <th>Назва</th>
-                                            <th>Автор</th>
-                                            <th>Жанр</th>
-                                            <th>Статус</th>
-                                            <th>Оцінка</th>
-                                            <th>Ціна</th>
-                                            <th>Джерело</th>
-                                            <th></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {filteredRooms.map((roomData) => {
-                                            const {
-                                                id,
-                                                name,
-                                                author,
-                                                genre,
-                                                status,
-                                                rate,
-                                                price,
-                                                source,
-                                            } = roomData || {};
-
-                                            return <tr key={id}>
-                                                <td>{name}</td>
-                                                <td>{author}</td>
-                                                <td>{genre}</td>
-                                                <td>{(status || '').toUpperCase()}</td>
-                                                <td>{(rate || '').toUpperCase()}</td>
-                                                <td>{price} грн</td>
-                                                <td>{(source || '').toUpperCase()}</td>
-                                                <td className="actions">
-                                                    <button onClick={() => {
-                                                        console.log('edit');
-                                                    }}>
-                                                        Edit
-                                                    </button>
-                                                    <button onClick={() => {
-                                                        console.log('delete');
-                                                    }}>
-                                                        Delete
-                                                    </button>
-                                                </td>
-                                            </tr>;
-                                        })}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            )
-                            : <span>No rooms</span>}
-                    </>
-                    : <LoadingCenterSpinner />}
+                {activeRoomId
+                    ? <GamePage activeRoomId={activeRoomId} socket={socket} />
+                    : <RoomsList />
+                }
             </div>
             <div className="footer">Copyright © 2025 wizardi</div>
         </div>

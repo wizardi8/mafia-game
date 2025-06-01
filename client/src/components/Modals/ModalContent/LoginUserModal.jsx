@@ -21,7 +21,6 @@ const LoginUserModal = ({ closeModal }) => {
 
         getUserHasAccess(passwordValue)
             .then((response) => {
-                debugger;
                 const userHasAccess = Boolean(response?.data);
                 dispatch(setUserHasAccess(userHasAccess));
 

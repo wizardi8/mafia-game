@@ -3,9 +3,12 @@ const express = require('express');
 
 const config = require('./config');
 const { MongoDB } = require('./MongoDB');
+const { initSockets } = require('./sockets');
 
 new MongoDB()?.then(() => {
     const app = express();
+
+    initSockets(app);
 
     app.use(express.json());
     app.use(express.static(path.join(__dirname, '../../', 'client', 'build')));

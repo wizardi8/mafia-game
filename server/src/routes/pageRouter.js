@@ -10,7 +10,7 @@ router.get('/favicon.ico', (req, res) => {
     fs.createReadStream(path.join(__dirname, '../../../', 'client', 'public', 'favicon.ico')).pipe(res);
 });
 
-router.get('/main', (req, res) => {
+router.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../../../', 'client', 'build', '/index.html'));
 });
 

@@ -40,11 +40,12 @@ body #root {
 
 .header {
     padding: 16px;
-    border-bottom: 2px solid #2f2020;
+    border-bottom: 1px solid #2f2020;
     display: flex;
     justify-content: space-between;
     font-size: xx-large;
     font-family: serif;
+    background: #c9c8c1;
 }
 
 .main-section {
@@ -75,11 +76,11 @@ body #root {
 .rooms-list table {
     width: 100%;
     border-spacing: 0;
-    border: 2px solid #2f2020;
+    border: 1px solid #2f2020;
 }
 
 .rooms-list tr th {
-    border: 2px solid #2f2020;
+    border: 1px solid #2f2020;
     color: #000;
     background: #d1ceb0;
     padding: 3px;
@@ -91,7 +92,7 @@ body #root {
 
 .rooms-list tr td {
     padding: 3px;
-    border: 2px solid #2f2020;
+    border: 1px solid #2f2020;
 }
 
 .actions {
@@ -131,7 +132,7 @@ body #root {
     bottom: 0;
     left: 0;
     width: 100%;
-    border-top: 2px solid #2f2020;
+    border-top: 1px solid #2f2020;
     padding: 16px;
     background: #c9c8c1;
 }

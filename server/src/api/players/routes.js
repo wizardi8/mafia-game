@@ -6,4 +6,12 @@ const router = express.Router();
 
 router.get('/login', requestHandler(PlayersController.login));
 
+router.get('/:id', requestHandler(PlayersController.get));
+
+router.put('/:id', requestHandler(PlayersController.update));
+
+router.post('/', requestHandler(PlayersController.create));
+
+router.delete('/:id', requestHandler(PlayersController.delete));
+
 module.exports = router;

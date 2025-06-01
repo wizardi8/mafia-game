@@ -1,2 +1,3 @@
-export * from './pageSelectors';
 export * from './modalSelectors';
+export * from './roomsSelectors';
+export * from './gameDataSelectors';
