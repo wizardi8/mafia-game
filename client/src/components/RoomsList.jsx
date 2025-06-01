@@ -77,7 +77,9 @@ const RoomsList = () => {
                                     } = roomData || {};
                                     const playersCount = players.length;
                                     const PLAYERS_TOTAL_LIMIT = 2;
-                                    const isDisabled = playersCount >= PLAYERS_TOTAL_LIMIT;
+                                    const isGameStarted = status === 'in_game';
+                                    const isLimit = playersCount >= PLAYERS_TOTAL_LIMIT;
+                                    const isDisabled = isGameStarted || isLimit;
 
                                     return <tr key={id}>
                                         <td>{name}</td>
@@ -88,14 +90,16 @@ const RoomsList = () => {
                                                 <button
                                                     className="form-button"
                                                     onClick={() => {
-                                                        console.log('connect');
+                                                        if (isDisabled) return;
+
                                                         dispatch(updateActiveRoom({ id, data: roomData }));
                                                         dispatch(setActiveRoomId(id));
                                                     }}
+                                                    style={{ width: '90px' }}
                                                     disabled={isDisabled}
-                                                    title={isDisabled ? 'Room is full' : ''}
+                                                    title={isLimit ? 'Room is full' : isGameStarted ? 'Game started' : ''}
                                                 >
-                                                    Connect
+                                                    {isDisabled ? '❌' : 'Connect'}
                                                 </button>
                                             </div>
                                         </td>

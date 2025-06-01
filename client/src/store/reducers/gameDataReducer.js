@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     baseUrl: '',
     userHasAccess: false,
+    currentRole: null,
 };
 
 const gameDataSlice = createSlice({

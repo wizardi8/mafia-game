@@ -1,16 +1,18 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getActiveRoomId, getBaseUrl } from '../utils/selectors';
+import { getActiveRoomId, getBaseUrl, getStoreRooms } from '../utils/selectors';
 import { setUserConnectedToRoom, updateActiveRoom } from '../store/reducers/roomsReducer';
 
 import GamePage from './GamePage';
 import RoomsList from './RoomsList';
 import { io } from 'socket.io-client';
+import { setGameData } from '../store/reducers/gameDataReducer';
 
 const MainPage = () => {
     const dispatch = useDispatch();
 
     const baseUrl = useSelector(getBaseUrl);
+    const rooms = useSelector(getStoreRooms);
     const activeRoomId = useSelector(getActiveRoomId);
 
     const playerName = useMemo(() => {
@@ -29,6 +31,12 @@ const MainPage = () => {
     const socket = useMemo(() => {
         return io(baseUrl);
     }, [baseUrl]);
+
+    const activeRoom = useMemo(() => {
+        if (!Array.isArray(rooms)) return null;
+
+        return rooms.find((room) => room.id === activeRoomId);
+    }, [rooms, activeRoomId]);
 
     useEffect(() => {
         if (activeRoomId && playerName) {
@@ -52,6 +60,14 @@ const MainPage = () => {
 
                 dispatch(setUserConnectedToRoom(true));
             });
+
+            socket.on('role_assigned', (data = {}) => {
+                const { role, roomData, roomId } = data || {};
+                console.log(data);
+
+                dispatch(setGameData({ currentRole: role }));
+                dispatch(updateActiveRoom({ id: roomId, data: roomData }));
+            });
         }
     }, [activeRoomId, playerName]);
 
@@ -62,18 +78,25 @@ const MainPage = () => {
                 <div>{playerName}</div>
                 {activeRoomId ? (
                     <div className="add-button-container">
+                        {activeRoom?.status === 'waiting' ? (
+                            <button className="form-button" onClick={() => {
+                                socket.emit('start_game', { roomId: activeRoomId });
+                            }}>
+                                ▶️ Start game
+                            </button>
+                        ) : null}
                         <button className="form-button" onClick={() => {
                             socket.disconnect();
                             window.location.reload();
                         }}>
-                            Leave room
+                            {activeRoom?.status === 'in_game' ? '↩️ Leave game' : '↩️ Leave room'}
                         </button>
                     </div>
                 ) : null}
             </div>
             <div className="main-section">
                 {activeRoomId
-                    ? <GamePage activeRoomId={activeRoomId} socket={socket} />
+                    ? <GamePage activeRoom={activeRoom} />
                     : <RoomsList />
                 }
             </div>

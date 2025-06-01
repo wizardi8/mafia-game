@@ -8,6 +8,10 @@ class PlayersService {
         return password === dbPassword;
     }
 
+    static async getAllByRoomId({ roomId }) {
+        return PlayersModel.getAllByRoomId({ roomId });
+    }
+
     static async get({ id }) {
         return PlayersModel.get({ id });
     }

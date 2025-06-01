@@ -5,6 +5,10 @@ class PlayersModel {
         return MongoDB.getInstance()?.collections.players.findOne();
     }
 
+    static getAllByRoomId({ roomId }) {
+        return MongoDB.getInstance()?.collections.players.find({ roomId }).toArray();
+    }
+
     static get({ id }) {
         return MongoDB.getInstance()?.collections.players.findOne({ id });
     }
