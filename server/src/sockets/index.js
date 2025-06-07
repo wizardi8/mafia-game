@@ -224,12 +224,11 @@ const initSockets = (app) => {
 
                 if (winner) {
                     room.players.forEach((id) => {
-                        if (room.roles[id] === ROLES.CITIZEN) {
-                            PlayersService.update({
-                                id,
-                                data: { alive: true },
-                            });
-                        }
+                        // TODO update many
+                        PlayersService.update({
+                            id,
+                            data: { alive: true },
+                        });
                     });
                 }
 

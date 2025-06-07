@@ -2,8 +2,8 @@ import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setModal } from '../store/reducers/modalReducer';
 import { setGameData } from '../store/reducers/gameDataReducer';
-import { getActivePlayerName, getActiveRoomId, getBaseUrl, getStoreRooms } from '../utils/selectors';
 import { setActiveRoomId, setUserConnectedToRoom, updateActiveRoom } from '../store/reducers/roomsReducer';
+import { getActivePlayerId, getActivePlayerName, getActiveRoomId, getBaseUrl, getStoreRooms } from '../utils/selectors';
 import {
     addPlayer,
     deletePlayer,
@@ -30,6 +30,7 @@ const MainPage = () => {
     const rooms = useSelector(getStoreRooms);
     const activeRoomId = useSelector(getActiveRoomId);
     const playerName = useSelector(getActivePlayerName);
+    const activePlayerId = useSelector(getActivePlayerId);
 
     const socket = useMemo(() => {
         return io(baseUrl);
@@ -43,6 +44,8 @@ const MainPage = () => {
 
     useEffect(() => {
         try {
+            if (playerName) return;
+
             const name = localStorage.getItem('MAFIA_GAME_PLAYER_NAME');
 
             if (!name) {
@@ -51,9 +54,9 @@ const MainPage = () => {
 
             dispatch(setActivePlayerName(name));
         } catch (e) {
-            dispatch(setModal({ modalType: MODAL_TYPES.SETTINGS }));
+            dispatch(setModal({ modalType: MODAL_TYPES.SETTINGS, modalProps: { playerId: activePlayerId } }));
         }
-    }, []);
+    }, [playerName, activePlayerId]);
 
     useEffect(() => {
         if (activeRoomId && playerName) {
@@ -122,7 +125,7 @@ const MainPage = () => {
                 <div className="page-logo">Mafia UA</div>
                 <div className="header-user-name">{playerName}</div>
                 <button className="form-button" onClick={() => {
-                    dispatch(setModal({ modalType: MODAL_TYPES.SETTINGS }));
+                    dispatch(setModal({ modalType: MODAL_TYPES.SETTINGS, modalProps: { playerId: activePlayerId } }));
                 }}>
                     ⚙️
                 </button>

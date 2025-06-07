@@ -11,6 +11,7 @@ import {
 
 import { getAllPlayers } from '../api/players';
 
+import PlayersList from './PlayersList';
 import PlayerActions from './PlayerActions';
 import LoadingCenterSpinner from './LoadingCenterSpinner';
 
@@ -78,6 +79,7 @@ const GamePage = ({ activeRoom, socket }) => {
                         </div>
                     ) : null}
                 </div>
+                <PlayersList players={players} />
                 <div className="game-user-info">
                     {isGameStarted
                         ? (<>

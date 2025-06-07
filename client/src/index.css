@@ -206,6 +206,38 @@ body #root {
     max-width: 25vw;
 }
 
+.players-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    min-height: 38px;
+    gap: 8px;
+}
+
+.players-list-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #11151a;
+    max-width: 100px;
+    min-width: 100px;
+    height: 38px;
+    border: 3px solid #484c51;
+    border-radius: 15px;
+}
+
+.not-alive-player {
+    border: 3px solid #f25a5a !important;
+}
+
+.players-list-item span {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 0 5px;
+}
+
 .footer {
     position: fixed;
     bottom: 0;

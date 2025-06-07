@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getActivePlayerName } from '../../../utils/selectors';
-import { setActivePlayerName } from '../../../store/reducers/playersReducer';
+import { setActivePlayerName, updateActivePlayer } from '../../../store/reducers/playersReducer';
 
 import Modal from 'react-modal';
 
 import { CUSTOM_STYLES } from '../../../constants';
 
-const SettingsModal = ({ closeModal }) => {
+const SettingsModal = ({ closeModal, modalProps = {} }) => {
     const dispatch = useDispatch();
 
     const playerName = useSelector(getActivePlayerName);
 
     const [nameValue, setNameValue] = useState(playerName || '');
+
+    const { playerId } = modalProps || {};
 
     const onClick = () => {
         if (!nameValue) {
@@ -21,6 +23,10 @@ const SettingsModal = ({ closeModal }) => {
         }
 
         dispatch(setActivePlayerName(nameValue));
+
+        if (playerId) {
+            dispatch(updateActivePlayer({ id: playerId, data: { name: nameValue } }));
+        }
 
         try {
             localStorage.setItem('MAFIA_GAME_PLAYER_NAME', nameValue);
