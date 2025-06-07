@@ -15,7 +15,7 @@ import PlayersList from './PlayersList';
 import PlayerActions from './PlayerActions';
 import LoadingCenterSpinner from './LoadingCenterSpinner';
 
-import { PLAYERS_TOTAL_LIMIT, ROLE_NAMES, ROLES } from '../../../shared/constants/players';
+import { PLAYERS_MIN_LIMIT, PLAYERS_TOTAL_LIMIT, ROLE_NAMES, ROLES } from '../../../shared/constants/players';
 import { ROOM_PHASE_NAMES, ROOM_PHASES, ROOM_STATUS_NAMES, ROOM_STATUSES } from '../../../shared/constants/rooms';
 
 const GamePage = ({ activeRoom, socket }) => {
@@ -27,13 +27,14 @@ const GamePage = ({ activeRoom, socket }) => {
     const activePlayerId = useSelector(getActivePlayerId);
     const isUserConnectedToRoom = useSelector(getIsUserConnectedToRoom);
 
-    const isGameStarted = !!currentRole;
-
     const activePlayer = useMemo(() => {
         if (!Array.isArray(players)) return null;
 
         return players.find((player) => player.id === activePlayerId);
     }, [players, activePlayerId]);
+
+    const isGameStarted = !!currentRole;
+    const isDisabledStartGame = activeRoom?.players?.length < PLAYERS_MIN_LIMIT;
 
     useEffect(() => {
         if (!activeRoom?.id) return;
@@ -57,9 +58,12 @@ const GamePage = ({ activeRoom, socket }) => {
                 <div className="game-header">
                     <div className="game-header-meta-info">
                         <div><b>Назва кімнати:</b> {activeRoom?.name}</div>
-                        <div><b>Статус гри:</b> {ROOM_STATUS_NAMES[activeRoom?.status]} {!isGameStarted ? '⌛️' : '▶️'}
+                        <div><b>Статус
+                            гри:</b> {`${ROOM_STATUS_NAMES[activeRoom?.status]} ${!isGameStarted ? '⌛️' : '▶️'}`}
                         </div>
-                        <div><b>Кількість гравців:</b> {activeRoom?.players?.length}/{PLAYERS_TOTAL_LIMIT} 👥</div>
+                        <div><b>Кількість
+                            гравців:</b> {`${activeRoom?.players?.length}/${PLAYERS_TOTAL_LIMIT} 👥`}
+                        </div>
                     </div>
                     {activeRoomId ? (
                         <div className="game-header-buttons">
@@ -70,9 +74,14 @@ const GamePage = ({ activeRoom, socket }) => {
                                 {activeRoom?.status === ROOM_STATUSES.IN_GAME ? 'Залишити гру ↩️' : 'Залишити кімнату ↩️'}
                             </button>
                             {activeRoom?.status === ROOM_STATUSES.WAITING ? (
-                                <button className="form-button" onClick={() => {
-                                    socket.emit('start_game', { roomId: activeRoomId });
-                                }}>
+                                <button
+                                    className="form-button"
+                                    disabled={isDisabledStartGame}
+                                    title={isDisabledStartGame ? `Щоб почати гру повинно бути мінімум ${PLAYERS_MIN_LIMIT} гравці` : ''}
+                                    onClick={() => {
+                                        socket.emit('start_game', { roomId: activeRoomId });
+                                    }}
+                                >
                                     Почати гру ▶️
                                 </button>
                             ) : null}
@@ -93,7 +102,7 @@ const GamePage = ({ activeRoom, socket }) => {
                             </div>
                         </>)
                         : (<>
-                            <div>(Почніть, будь ласка, гру ▶️)</div>
+                            <div>{isDisabledStartGame ? (`(Щоб почати гру повинно бути мінімум ${PLAYERS_MIN_LIMIT} гравці)`) : ('(Почніть, будь ласка, гру ▶️)')}</div>
                         </>)}
                 </div>
                 <PlayerActions
