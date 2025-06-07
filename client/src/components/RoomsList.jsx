@@ -100,7 +100,6 @@ const RoomsList = () => {
                                                         dispatch(updateActiveRoom({ id, data: roomData }));
                                                         dispatch(setActiveRoomId(id));
                                                     }}
-                                                    // style={{ width: '152px' }}
                                                     disabled={isDisabled}
                                                     title={isLimit ? 'Немає вільних місць' : isGameStarted ? 'Гра вже почалась' : ''}
                                                 >

@@ -3,11 +3,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getModal } from '../../utils/selectors';
 import { setModal } from '../../store/reducers/modalReducer';
 
+import SettingsModal from './ModalContent/SettingsModal';
 import LoginUserModal from './ModalContent/LoginUserModal';
 
 import { MODAL_TYPES } from '../../constants';
 
 const MODALS_BY_TYPE = {
+    [MODAL_TYPES.SETTINGS]: SettingsModal,
     [MODAL_TYPES.LOGIN_USER]: LoginUserModal,
 };
 

@@ -138,7 +138,6 @@ const initSockets = (app) => {
             });
 
             for (const id of playerIds) {
-                // io.to(id).emit('role_assigned', { role: roles[id], roomData, roomId });
                 io.to(id).emit('game_update', {
                     key: 'role_assigned',
                     role: roles[id],

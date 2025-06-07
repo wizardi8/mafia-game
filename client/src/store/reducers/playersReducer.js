@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     players: [],
     activePlayerId: null,
+    activePlayerName: '',
 };
 
 const playersSlice = createSlice({
@@ -14,6 +15,9 @@ const playersSlice = createSlice({
         },
         setActivePlayerId(state, action) {
             state.activePlayerId = action.payload;
+        },
+        setActivePlayerName(state, action) {
+            state.activePlayerName = action.payload;
         },
         addPlayer(state, action) {
             const { id } = action.payload || {};
@@ -38,5 +42,5 @@ const playersSlice = createSlice({
     },
 });
 
-export const { setPlayers, addPlayer, deletePlayer, updateActivePlayer, setActivePlayerId } = playersSlice.actions;
+export const { setPlayers, addPlayer, deletePlayer, updateActivePlayer, setActivePlayerName, setActivePlayerId } = playersSlice.actions;
 export default playersSlice.reducer;

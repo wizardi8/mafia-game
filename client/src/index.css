@@ -45,14 +45,23 @@ body #root {
     border-bottom: 1px solid #484c51;
     display: flex;
     justify-content: space-between;
-    font-size: 24px;
+    align-items: center;
+    font-size: 16px;
     font-family: serif;
     background: #11151a;
     gap: 16px;
+    height: 38px;
 }
 
 .page-logo {
-    min-width: 132px;
+    font-size: 21px;
+}
+
+.header-user-name {
+    max-width: 230px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .main-section {
@@ -76,12 +85,17 @@ body #root {
 }
 
 .search-section input,
+.settings-modal input,
 .voting-section select {
     color: inherit;
     background: #161a1f;
     border: 1px solid #484c51;
     border-radius: 5px;
     padding: 0 8px;
+}
+
+.settings-modal input {
+    line-height: 34px;
 }
 
 .rooms-list {
@@ -116,13 +130,13 @@ body #root {
     justify-content: space-around;
 }
 
-.login-user-modal {
+.login-user-modal, .settings-modal {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-.login-user-modal-buttons {
+.login-user-modal-buttons, .settings-modal-buttons {
     display: flex;
     flex-direction: row;
     justify-content: end;
@@ -130,7 +144,7 @@ body #root {
 }
 
 .form-button {
-    background: #ffe0ac;
+    background: #dcdcdc;
     color: #000000;
     padding: 0 8px;
     border-radius: 5px;
@@ -184,10 +198,12 @@ body #root {
     display: flex;
     gap: 8px;
     align-items: center;
+    width: 100vw;
 }
 
 .voting-section select {
     height: 100%;
+    max-width: 25vw;
 }
 
 .footer {
@@ -202,4 +218,5 @@ body #root {
 
 .ReactModal__Overlay {
     z-index: 2;
+    background-color: rgba(255, 255, 255, 0.3) !important;
 }

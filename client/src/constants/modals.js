@@ -1,4 +1,5 @@
 export const MODAL_TYPES = {
+    SETTINGS: 'settings',
     LOGIN_USER: 'loginUser',
 };
 
@@ -9,7 +10,8 @@ export const CUSTOM_STYLES = {
         right: 'auto',
         bottom: 'auto',
         marginRight: '-50%',
-        border: '1px solid #c3be94',
+        background: '#162831',
+        border: '1px solid #484c51',
         transform: 'translate(-50%, -50%)',
     },
 };

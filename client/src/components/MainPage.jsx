@@ -1,9 +1,16 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { setModal } from '../store/reducers/modalReducer';
 import { setGameData } from '../store/reducers/gameDataReducer';
-import { getActiveRoomId, getBaseUrl, getStoreRooms } from '../utils/selectors';
+import { getActivePlayerName, getActiveRoomId, getBaseUrl, getStoreRooms } from '../utils/selectors';
 import { setActiveRoomId, setUserConnectedToRoom, updateActiveRoom } from '../store/reducers/roomsReducer';
-import { addPlayer, deletePlayer, setActivePlayerId, updateActivePlayer } from '../store/reducers/playersReducer';
+import {
+    addPlayer,
+    deletePlayer,
+    setActivePlayerId,
+    updateActivePlayer,
+    setActivePlayerName,
+} from '../store/reducers/playersReducer';
 
 import { io } from 'socket.io-client';
 
@@ -12,6 +19,7 @@ import { getRoom } from '../api/rooms';
 import GamePage from './GamePage';
 import RoomsList from './RoomsList';
 
+import { MODAL_TYPES } from '../constants';
 import { ROOM_STATUSES } from '../../../shared/constants/rooms';
 import { WINNER_NAMES, WINNERS } from '../../../shared/constants/players';
 
@@ -21,19 +29,7 @@ const MainPage = () => {
     const baseUrl = useSelector(getBaseUrl);
     const rooms = useSelector(getStoreRooms);
     const activeRoomId = useSelector(getActiveRoomId);
-
-    const playerName = useMemo(() => {
-        const savedName = localStorage.getItem('MAFIA_PLAYER_GAME');
-        if (savedName) return savedName;
-
-        const names = ['Alex', 'Bob', 'Carl', 'Dave', 'Eve', 'Fred', 'Jane'];
-        const randomName = names[Math.floor(Math.random() * names.length)];
-        const randomHash = Math.random().toString(36).substring(2, 7);
-        const name = `${randomName}_${randomHash}`;
-        localStorage.setItem('MAFIA_PLAYER_GAME', name);
-
-        return name;
-    }, []);
+    const playerName = useSelector(getActivePlayerName);
 
     const socket = useMemo(() => {
         return io(baseUrl);
@@ -44,6 +40,20 @@ const MainPage = () => {
 
         return rooms.find((room) => room.id === activeRoomId);
     }, [rooms, activeRoomId]);
+
+    useEffect(() => {
+        try {
+            const name = localStorage.getItem('MAFIA_GAME_PLAYER_NAME');
+
+            if (!name) {
+                throw new Error();
+            }
+
+            dispatch(setActivePlayerName(name));
+        } catch (e) {
+            dispatch(setModal({ modalType: MODAL_TYPES.SETTINGS }));
+        }
+    }, []);
 
     useEffect(() => {
         if (activeRoomId && playerName) {
@@ -110,7 +120,12 @@ const MainPage = () => {
         <div className="page">
             <div className="header">
                 <div className="page-logo">Mafia UA</div>
-                <div>{playerName}</div>
+                <div className="header-user-name">{playerName}</div>
+                <button className="form-button" onClick={() => {
+                    dispatch(setModal({ modalType: MODAL_TYPES.SETTINGS }));
+                }}>
+                    ⚙️
+                </button>
             </div>
             <div className="main-section">
                 {activeRoomId
