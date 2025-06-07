@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.get('/login', requestHandler(PlayersController.login));
 
+router.get('/', requestHandler(PlayersController.getAllByRoomId));
+
 router.get('/:id', requestHandler(PlayersController.get));
 
 router.put('/:id', requestHandler(PlayersController.update));

@@ -1,12 +1,19 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { setGameData } from '../store/reducers/gameDataReducer';
 import { getActiveRoomId, getBaseUrl, getStoreRooms } from '../utils/selectors';
-import { setUserConnectedToRoom, updateActiveRoom } from '../store/reducers/roomsReducer';
+import { setActiveRoomId, setUserConnectedToRoom, updateActiveRoom } from '../store/reducers/roomsReducer';
+import { addPlayer, deletePlayer, setActivePlayerId, updateActivePlayer } from '../store/reducers/playersReducer';
+
+import { io } from 'socket.io-client';
+
+import { getRoom } from '../api/rooms';
 
 import GamePage from './GamePage';
 import RoomsList from './RoomsList';
-import { io } from 'socket.io-client';
-import { setGameData } from '../store/reducers/gameDataReducer';
+
+import { ROOM_STATUSES } from '../../../shared/constants/rooms';
+import { WINNER_NAMES, WINNERS } from '../../../shared/constants/players';
 
 const MainPage = () => {
     const dispatch = useDispatch();
@@ -40,33 +47,61 @@ const MainPage = () => {
 
     useEffect(() => {
         if (activeRoomId && playerName) {
-            socket.emit('join_room', { roomId: activeRoomId, playerName });
+            getRoom(activeRoomId).then((response) => {
+                const room = response.data;
 
-            socket.on('game_update', (data = {}) => {
-                const { key, roomData = {} } = data || {};
-                const { id } = roomData || {};
-                console.log(data);
-
-                switch (key) {
-                    case 'player_connected':
-                    case 'player_disconnected': {
-                        dispatch(updateActiveRoom({ id, data: roomData }));
-                        break;
-                    }
-                    default: {
-                        break;
-                    }
+                if (!room) alert('Something went wrong!');
+                if (room.status !== ROOM_STATUSES.WAITING) {
+                    dispatch(setActiveRoomId(null));
+                    alert('Вибачте, гра вже триває');
+                    return;
                 }
 
-                dispatch(setUserConnectedToRoom(true));
-            });
+                socket.emit('join_room', { roomId: activeRoomId, playerName });
 
-            socket.on('role_assigned', (data = {}) => {
-                const { role, roomData, roomId } = data || {};
-                console.log(data);
+                socket.on('game_update', (data = {}) => {
+                    const { key, playerId, role, winner, roomData = {}, playerData = {} } = data || {};
+                    const { id } = roomData || {};
+                    const { name } = playerData || {};
+                    console.log(data);
 
-                dispatch(setGameData({ currentRole: role }));
-                dispatch(updateActiveRoom({ id: roomId, data: roomData }));
+                    switch (key) {
+                        case 'player_connected': {
+                            if (name === playerName) {
+                                dispatch(setUserConnectedToRoom(true));
+                                dispatch(setActivePlayerId(playerId));
+                            }
+                            dispatch(addPlayer(playerData));
+                            break;
+                        }
+                        case 'player_disconnected': {
+                            dispatch(deletePlayer(playerId));
+                            break;
+                        }
+                        case 'player_eliminated': {
+                            if (winner) {
+                                dispatch(setGameData({ currentRole: null }));
+                                alert(`Гра завершена! Переможці: ${WINNER_NAMES[winner]} ${winner === WINNERS.CITIZENS
+                                    ? '👱🏼‍♂️'
+                                    : '🧛🏾'}`);
+                            } else {
+                                dispatch(updateActivePlayer({ id: playerId, data: { alive: false } }));
+                            }
+                            break;
+                        }
+                        case 'role_assigned': {
+                            dispatch(setGameData({ currentRole: role }));
+                            break;
+                        }
+                        default: {
+                            break;
+                        }
+                    }
+
+                    dispatch(updateActiveRoom({ id, data: roomData }));
+                });
+            }).catch((error) => {
+                console.log(error);
             });
         }
     }, [activeRoomId, playerName]);
@@ -74,29 +109,12 @@ const MainPage = () => {
     return (
         <div className="page">
             <div className="header">
-                <div>Mafia UA</div>
+                <div className="page-logo">Mafia UA</div>
                 <div>{playerName}</div>
-                {activeRoomId ? (
-                    <div className="add-button-container">
-                        {activeRoom?.status === 'waiting' ? (
-                            <button className="form-button" onClick={() => {
-                                socket.emit('start_game', { roomId: activeRoomId });
-                            }}>
-                                ▶️ Start game
-                            </button>
-                        ) : null}
-                        <button className="form-button" onClick={() => {
-                            socket.disconnect();
-                            window.location.reload();
-                        }}>
-                            {activeRoom?.status === 'in_game' ? '↩️ Leave game' : '↩️ Leave room'}
-                        </button>
-                    </div>
-                ) : null}
             </div>
             <div className="main-section">
                 {activeRoomId
-                    ? <GamePage activeRoom={activeRoom} />
+                    ? <GamePage activeRoom={activeRoom} socket={socket} />
                     : <RoomsList />
                 }
             </div>

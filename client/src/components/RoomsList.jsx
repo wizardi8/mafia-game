@@ -4,7 +4,11 @@ import { getStoreRooms } from '../utils/selectors';
 import { updateActiveRoom, setActiveRoomId, setRooms } from '../store/reducers/roomsReducer';
 
 import { getAllRooms } from '../api/rooms';
+
 import LoadingCenterSpinner from './LoadingCenterSpinner';
+
+import { PLAYERS_TOTAL_LIMIT } from '../../../shared/constants/players';
+import { ROOM_STATUS_NAMES, ROOM_STATUSES } from '../../../shared/constants/rooms';
 
 const RoomsList = () => {
     const dispatch = useDispatch();
@@ -19,11 +23,13 @@ const RoomsList = () => {
         if (!searchValue) return rooms;
 
         return rooms.filter((roomData) => {
-            const { name, status, currentPhase } = roomData || {};
+            const { name, status } = roomData || {};
 
-            return name.toLowerCase().includes(searchValue.toLowerCase()) ||
-                status.toLowerCase().includes(searchValue.toLowerCase()) ||
-                currentPhase.toLowerCase().includes(searchValue.toLowerCase());
+            const isIncludeValue = (value = '') => {
+                return value.toLowerCase().includes(searchValue.toLowerCase());
+            };
+
+            return isIncludeValue(name) || isIncludeValue(status);
         });
     }, [searchValue, rooms]);
 
@@ -46,13 +52,13 @@ const RoomsList = () => {
         isPageReady ? (
             <>
                 <div className="search-section">
-                    <input type="text" value={searchValue} onChange={(e) => {
+                    <input type="text" name="search" value={searchValue} onChange={(e) => {
                         setSearchValue(e.target.value);
                     }} />
                     <button className="form-button" onClick={() => {
                         setSearchValue('');
                     }}>
-                        Clear
+                        Очистити
                     </button>
                 </div>
                 {filteredRooms.length
@@ -61,9 +67,9 @@ const RoomsList = () => {
                             <table>
                                 <thead>
                                 <tr>
-                                    <th>Room name</th>
-                                    <th>Room status</th>
-                                    <th>Players</th>
+                                    <th>Назва кімнати</th>
+                                    <th>Статус гри</th>
+                                    <th>Кількість гравців</th>
                                     <th></th>
                                 </tr>
                                 </thead>
@@ -76,14 +82,13 @@ const RoomsList = () => {
                                         players = [],
                                     } = roomData || {};
                                     const playersCount = players.length;
-                                    const PLAYERS_TOTAL_LIMIT = 2;
-                                    const isGameStarted = status === 'in_game';
+                                    const isGameStarted = status === ROOM_STATUSES.IN_GAME;
                                     const isLimit = playersCount >= PLAYERS_TOTAL_LIMIT;
                                     const isDisabled = isGameStarted || isLimit;
 
                                     return <tr key={id}>
                                         <td>{name}</td>
-                                        <td>{(status || '').toUpperCase()}</td>
+                                        <td>{ROOM_STATUS_NAMES[status]}</td>
                                         <td>{players.length}/{PLAYERS_TOTAL_LIMIT}</td>
                                         <td>
                                             <div className="actions">
@@ -95,11 +100,11 @@ const RoomsList = () => {
                                                         dispatch(updateActiveRoom({ id, data: roomData }));
                                                         dispatch(setActiveRoomId(id));
                                                     }}
-                                                    style={{ width: '90px' }}
+                                                    // style={{ width: '152px' }}
                                                     disabled={isDisabled}
-                                                    title={isLimit ? 'Room is full' : isGameStarted ? 'Game started' : ''}
+                                                    title={isLimit ? 'Немає вільних місць' : isGameStarted ? 'Гра вже почалась' : ''}
                                                 >
-                                                    {isDisabled ? '❌' : 'Connect'}
+                                                    {isDisabled ? '❌' : 'Підключитись 🌐'}
                                                 </button>
                                             </div>
                                         </td>
@@ -109,7 +114,7 @@ const RoomsList = () => {
                             </table>
                         </div>
                     )
-                    : <span>No rooms</span>}
+                    : <span>Немає кімнат</span>}
             </>
         ) : (
             <LoadingCenterSpinner />

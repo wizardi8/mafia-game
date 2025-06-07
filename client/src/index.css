@@ -1,8 +1,10 @@
 body {
     font-family: sans-serif;
+    font-size: 14px;
     height: 100vh;
     margin: 0;
-    background: #e6e4db;
+    background: #162831;
+    color: #fbf9f9;
 }
 
 body #root {
@@ -13,7 +15,7 @@ body #root {
 .loader {
     width: 35px;
     height: 35px;
-    border: 4px solid #000;
+    border: 4px solid #fbf9f9;
     border-bottom-color: transparent;
     border-radius: 50%;
     display: inline-block;
@@ -40,12 +42,17 @@ body #root {
 
 .header {
     padding: 16px;
-    border-bottom: 1px solid #2f2020;
+    border-bottom: 1px solid #484c51;
     display: flex;
     justify-content: space-between;
-    font-size: xx-large;
+    font-size: 24px;
     font-family: serif;
-    background: #c9c8c1;
+    background: #11151a;
+    gap: 16px;
+}
+
+.page-logo {
+    min-width: 132px;
 }
 
 .main-section {
@@ -56,16 +63,25 @@ body #root {
 }
 
 .main-section button {
-    width: fit-content;
-    background: #c3be94;
-    color: #000;
+    width: 136px;
+    min-width: 136px;
     font-weight: 600;
+    font-size: 13px;
 }
 
 .search-section {
     display: flex;
     flex-direction: row;
     gap: 16px;
+}
+
+.search-section input,
+.voting-section select {
+    color: inherit;
+    background: #161a1f;
+    border: 1px solid #484c51;
+    border-radius: 5px;
+    padding: 0 8px;
 }
 
 .rooms-list {
@@ -76,23 +92,23 @@ body #root {
 .rooms-list table {
     width: 100%;
     border-spacing: 0;
-    border: 1px solid #2f2020;
+    border: 1px solid #484c51;
 }
 
 .rooms-list tr th {
-    border: 1px solid #2f2020;
-    color: #000;
-    background: #d1ceb0;
+    background: #11151a;
     padding: 3px;
     position: sticky;
     top: 0;
     z-index: 1;
-    font-size: larger;
+    height: 44px;
 }
 
 .rooms-list tr td {
     padding: 3px;
-    border: 1px solid #2f2020;
+    text-align: center;
+    border-top: 1px solid #484c51;
+    background: #101518;
 }
 
 .actions {
@@ -114,17 +130,64 @@ body #root {
 }
 
 .form-button {
-    background: #c3be94;
-    color: #000;
-    padding: 4px 16px;
+    background: #ffe0ac;
+    color: #000000;
+    padding: 0 8px;
     border-radius: 5px;
     cursor: pointer;
     font-weight: 600;
+    width: max-content;
+    height: 38px;
 }
 
-.add-button-container {
+.game-header {
     display: flex;
-    justify-content: end;
+    justify-content: space-between;
+    height: 84px;
+}
+
+.game-header-meta-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    line-height: 28px;
+    width: 50vw;
+    font-size: 13px;
+}
+
+.game-header-meta-info div {
+    display: flex;
+    gap: 8px;
+}
+
+.game-header-buttons {
+    display: flex;
+    justify-content: start;
+    flex-direction: column;
+    gap: 8px;
+    width: 50vw;
+    align-items: end;
+}
+
+.game-header-buttons button {
+    width: 170px;
+}
+
+.game-user-info {
+    line-height: 38px;
+    display: flex;
+    gap: 32px;
+    font-size: 13px;
+}
+
+.voting-section {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.voting-section select {
+    height: 100%;
 }
 
 .footer {
@@ -132,9 +195,9 @@ body #root {
     bottom: 0;
     left: 0;
     width: 100%;
-    border-top: 1px solid #2f2020;
+    border-top: 1px solid #484c51;
     padding: 16px;
-    background: #c9c8c1;
+    background: #11151a;
 }
 
 .ReactModal__Overlay {

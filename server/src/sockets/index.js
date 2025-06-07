@@ -2,9 +2,14 @@ const http = require('http');
 const { Server } = require('socket.io');
 
 const config = require('../config');
+
 const { RoomsService } = require('../api/rooms');
 const { PlayersService } = require('../api/players');
-const { getRandomRoles } = require('./helpers');
+
+const { getRandomRoles, checkGameEnd } = require('./helpers');
+
+const { ROLES } = require('../../../shared/constants/players');
+const { DEFAULT_ROOM, ROOM_PHASES, ROOM_STATUSES } = require('../../../shared/constants/rooms');
 
 const initSockets = (app) => {
     const server = http.createServer(app);
@@ -39,13 +44,14 @@ const initSockets = (app) => {
                 id: roomId,
                 data: roomData,
             });
+            const playerData = {
+                roomId,
+                name: playerName,
+                id: playerId,
+                alive: true,
+            };
             await PlayersService.create({
-                data: {
-                    roomId,
-                    playerName,
-                    id: playerId,
-                    alive: true,
-                },
+                data: playerData,
             });
 
             socket.join(roomId);
@@ -53,6 +59,7 @@ const initSockets = (app) => {
                 key: 'player_connected',
                 playerId,
                 roomData,
+                playerData,
             });
 
             console.log(`Player ${playerId} joined to room ${roomId}`);
@@ -76,14 +83,7 @@ const initSockets = (app) => {
             const roomData = room ? {
                 ...room,
                 players,
-                ...(!players.length
-                        ? {
-                            status: 'waiting',
-                            currentPhase: 'night',
-                            roles: [],
-                        }
-                        : {}
-                ),
+                ...(!players.length ? { ...DEFAULT_ROOM } : {}),
             } : {};
 
             if (room) {
@@ -128,8 +128,8 @@ const initSockets = (app) => {
             const roomData = {
                 ...room,
                 roles,
-                status: 'in_game',
-                currentPhase: 'night',
+                status: ROOM_STATUSES.IN_GAME,
+                currentPhase: ROOM_PHASES.NIGHT,
             };
 
             await RoomsService.update({
@@ -138,17 +138,120 @@ const initSockets = (app) => {
             });
 
             for (const id of playerIds) {
-                io.to(id).emit('role_assigned', { role: roles[id], roomData, roomId });
+                // io.to(id).emit('role_assigned', { role: roles[id], roomData, roomId });
+                io.to(id).emit('game_update', {
+                    key: 'role_assigned',
+                    role: roles[id],
+                    roomData,
+                });
             }
         });
 
-        // socket.on('vote', ({ roomId, playerId }) => {
-        //     // Обробка голосування
-        //     console.log('Vote', playerId);
-        //     io.to(roomId).emit('game_update', { voted: playerId });
-        // });
+        socket.on('night_action', async ({ roomId, playerId }) => {
+            console.log('night_action event');
 
+            const room = await RoomsService.get({ id: roomId });
+            const target = await PlayersService.get({ id: playerId });
 
+            if (!room || !target) {
+                !room && console.log('[start_game error] room not found');
+                !target && console.log('[start_game error] player victim not found');
+                return;
+            }
+
+            await PlayersService.update({
+                id: playerId, data: {
+                    ...target,
+                    alive: false,
+                },
+            });
+
+            const roomData = {
+                ...room,
+                history: [...room.history, { phase: ROOM_PHASES.NIGHT, killed: playerId }],
+                currentPhase: ROOM_PHASES.DAY,
+            };
+
+            await RoomsService.update({
+                id: roomId,
+                data: roomData,
+            });
+
+            io.to(roomId).emit('game_update', {
+                key: 'player_eliminated',
+                playerId,
+                roomData,
+            });
+        });
+
+        socket.on('vote', async ({ roomId, voterId, playerId, activePlayers }) => {
+            console.log('vote event');
+
+            const room = await RoomsService.get({ id: roomId });
+            if (!room) {
+                console.log('[start_game error] room not found');
+                return;
+            }
+
+            if (!room.votes[playerId]) {
+                room.votes[playerId] = [];
+            }
+            room.votes[playerId].push(voterId);
+
+            await RoomsService.update({
+                id: roomId,
+                data: room,
+            });
+
+            const totalVotes = Object.values(room.votes).reduce((a, b) => a + b.length, 0);
+            const playerCount = activePlayers.length;
+
+            if (totalVotes >= playerCount) {
+                const [eliminatedId] = Object.entries(room.votes).sort((a, b) => b[1] - a[1])[0];
+
+                room.votes = {};
+                room.currentPhase = ROOM_PHASES.NIGHT;
+                room.history.push({ phase: 'voted', eliminated: eliminatedId });
+
+                await PlayersService.update({
+                    id: eliminatedId, data: {
+                        alive: false,
+                    },
+                });
+
+                const roomPlayers = await PlayersService.getAllByRoomId({ roomId });
+
+                const winner = checkGameEnd(room, roomPlayers);
+
+                if (winner) {
+                    room.players.forEach((id) => {
+                        if (room.roles[id] === ROLES.CITIZEN) {
+                            PlayersService.update({
+                                id,
+                                data: { alive: true },
+                            });
+                        }
+                    });
+                }
+
+                const newRoomData = {
+                    ...room,
+                    ...(winner ? DEFAULT_ROOM : {}),
+                };
+
+                await RoomsService.update({
+                    id: roomId,
+                    data: newRoomData,
+                });
+
+                io.to(roomId).emit('game_update', {
+                    key: 'player_eliminated',
+                    playerId: eliminatedId,
+                    roomData: newRoomData,
+                    winner,
+                });
+            }
+        });
     });
 
     server.listen(config.port, () => {

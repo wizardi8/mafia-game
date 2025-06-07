@@ -43,7 +43,7 @@ const LoginUserModal = ({ closeModal }) => {
     >
         <div className="login-user-modal">
             <div>Login</div>
-            <input type="text" value={passwordValue} placeholder="password" onChange={(e) => {
+            <input type="text" name="password" value={passwordValue} placeholder="password" onChange={(e) => {
                 setPasswordValue(e.target.value);
             }} />
             <div className="login-user-modal-buttons">

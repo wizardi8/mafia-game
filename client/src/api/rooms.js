@@ -4,6 +4,6 @@ export const getAllRooms = () => {
     return axios.get('/api/rooms');
 };
 
-export const getRoomData = (id) => {
-    return axios.get(`/api/rooms/${id}`);
+export const getRoom = (roomId) => {
+    return axios.get(`/api/rooms/${roomId}`);
 }

@@ -8,6 +8,13 @@ class PlayersController {
         res.json({ data });
     }
 
+    static async getAllByRoomId(req, res) {
+        const { roomId } = req.query;
+
+        const data = await PlayersService.getAllByRoomId({ roomId });
+        res.json({ data });
+    }
+
     static async get(req, res) {
         const { id } = req.params;
 
