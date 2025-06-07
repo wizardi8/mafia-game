@@ -36,6 +36,11 @@ const SettingsModal = ({ closeModal, modalProps = {} }) => {
         closeModal();
     };
 
+    if (playerId) {
+        alert('Щоб відкрити налаштування, спочатку залиште кімнату ↩️');
+        return null;
+    }
+
     return <Modal
         isOpen={true}
         style={CUSTOM_STYLES}

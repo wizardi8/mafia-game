@@ -59,6 +59,8 @@ const MainPage = () => {
     }, [playerName, activePlayerId]);
 
     useEffect(() => {
+        if (activePlayerId) return;
+
         if (activeRoomId && playerName) {
             getRoom(activeRoomId).then((response) => {
                 const room = response.data;
@@ -117,7 +119,7 @@ const MainPage = () => {
                 console.log(error);
             });
         }
-    }, [activeRoomId, playerName]);
+    }, [activeRoomId, playerName, activePlayerId]);
 
     return (
         <div className="page">
