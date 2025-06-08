@@ -16,6 +16,7 @@ import { io } from 'socket.io-client';
 
 import { getRoom } from '../api/rooms';
 
+import Footer from './Footer';
 import GamePage from './GamePage';
 import RoomsList from './RoomsList';
 
@@ -143,7 +144,7 @@ const MainPage = () => {
                     : <RoomsList />
                 }
             </div>
-            <div className="footer">Copyright © 2025 wizardi</div>
+            <Footer />
         </div>
     );
 };
