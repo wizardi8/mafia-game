@@ -8,7 +8,6 @@ const { PlayersService } = require('../api/players');
 
 const { getRandomRoles, checkGameEnd } = require('./helpers');
 
-const { ROLES } = require('../../../shared/constants/players');
 const { DEFAULT_ROOM, ROOM_PHASES, ROOM_STATUSES } = require('../../../shared/constants/rooms');
 
 const initSockets = (app) => {

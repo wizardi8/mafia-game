@@ -17,12 +17,10 @@ function App() {
         getGameData()
             .then((results) => {
                 const { data = {} } = results || {};
-                // const { baseUrl } = data || {};
+                const { baseUrl, port } = data || {};
 
-                // TODO baseUrl
                 dispatch(setGameData({
-                    ...data,
-                    // baseUrl: `http://${baseUrl}:3000`,
+                    baseUrl: `http://${baseUrl}:${port}`,
                 }));
                 setIsPageReady(true);
             })
