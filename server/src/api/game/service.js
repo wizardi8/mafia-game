@@ -4,7 +4,6 @@ class GameService {
     static async getData() {
 
         return {
-            port: config.port,
             baseUrl: config.baseUrl,
         };
     }
