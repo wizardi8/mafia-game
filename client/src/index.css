@@ -64,10 +64,7 @@ body #root {
 }
 
 .header-user-name {
-    max-width: 230px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+    max-width: 30vw;
     font-family: sans-serif;
 }
 
@@ -181,6 +178,11 @@ body #root {
     gap: 8px;
 }
 
+.game-header-meta-info b {
+    white-space: nowrap;
+    width: auto;
+}
+
 .game-header-buttons {
     display: flex;
     justify-content: start;
@@ -205,13 +207,17 @@ body #root {
     display: flex;
     gap: 8px;
     align-items: center;
-    width: 100vw;
+    width: calc(100vw - 32px);
 }
 
 .voting-section select {
-    height: 100%;
     min-width: 20vw;
-    max-width: 25vw;
+    width: 100%;
+    height: 38px;
+}
+
+.voting-section-text {
+    white-space: nowrap;
 }
 
 .players-list {
@@ -242,10 +248,20 @@ body #root {
 }
 
 .players-list-item span {
+    padding: 0 5px;
+}
+
+.player-hint {
+    display: flex;
+    align-items: center;
+    height: 38px;
+    border-top: 1px solid #484c51;
+}
+
+.text-trim {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    padding: 0 5px;
 }
 
 .footer {

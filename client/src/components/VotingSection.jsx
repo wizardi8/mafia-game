@@ -16,7 +16,7 @@ const VotingSection = ({ socket, players, activeRoom, activePlayer }) => {
 
     return (
         <div className="voting-section">
-            <div><b>Вигнати гравця:</b></div>
+            <div className="voting-section-text"><b>Вигнати гравця:</b></div>
             <select
                 value={selectedPlayerId}
                 name="voting-select"

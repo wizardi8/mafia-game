@@ -58,7 +58,7 @@ const GamePage = ({ activeRoom, socket }) => {
             <>
                 <div className="game-header">
                     <div className="game-header-meta-info">
-                        <div><b>Назва кімнати:</b> {activeRoom?.name}</div>
+                        <div><b>Назва кімнати:</b> <span className="text-trim">{activeRoom?.name}</span></div>
                         <div><b>Статус
                             гри:</b> {`${ROOM_STATUS_NAMES[activeRoom?.status]} ${!isGameStarted ? '⌛️' : '▶️'}`}
                         </div>

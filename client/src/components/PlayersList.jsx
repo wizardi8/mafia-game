@@ -7,7 +7,7 @@ const PlayersList = ({ players }) => {
         const classes = `players-list-item ${!alive ? 'not-alive-player' : ''}`;
 
         return (<div className={classes} key={id}>
-            <span>{!alive ? '☠️ ' : ''}{name}</span>
+            <span className="text-trim">{!alive ? '☠️ ' : ''}{name}</span>
         </div>);
     })}</div>;
 };

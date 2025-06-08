@@ -14,6 +14,8 @@ export const ALERT_MESSAGES = {
     INCORRECT_PASSWORD: 'Password is incorrect',
     YOU_HAVE_BEEN_KILLED: 'Вас було вбито ☠️',
     NIGHT_MOVE: 'Зараз ходить мафія',
+    NIGHT_MOVE_HINT: 'Виберіть, будь ласка, вашу жертву',
+    DAY_MOVE_HINT: 'Виберіть, будь ласка, хто мафія',
     CHOOSE_PLAYER: 'Для підтвердження виберіть гравця',
     ENTER_PLAYER_NAME: 'Введіть, будь ласка, ваше ім\'я',
     CANNOT_OPEN_SETTINGS: 'Щоб відкрити налаштування, спочатку залиште кімнату ↩️',

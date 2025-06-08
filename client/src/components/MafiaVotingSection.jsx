@@ -30,7 +30,7 @@ const MafiaVotingSection = ({ socket, players, activeRoom, setMafiaWon }) => {
 
     return (
         <div className="voting-section">
-            <div><b>Вибрати жертву:</b></div>
+            <div className="voting-section-text"><b>Вибрати жертву:</b></div>
             <select
                 value={selectedPlayerId}
                 name="voting-select"

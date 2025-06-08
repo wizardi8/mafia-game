@@ -127,7 +127,7 @@ const MainPage = () => {
             <div className="header">
                 <div className="page-logo">Mafia UA</div>
                 <div className="header-right-section">
-                    <div className="header-user-name">{playerName}</div>
+                    <div className="header-user-name text-trim">{playerName}</div>
                     <button className="form-button" onClick={() => {
                         dispatch(setModal({
                             modalType: MODAL_TYPES.SETTINGS,
