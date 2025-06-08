@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { getActivePlayerId } from '../utils/selectors';
 
 import { ROLES } from '../../../shared/constants/players';
+import { ALERT_MESSAGES, BUTTON_MESSAGES } from '../constants';
 
 const MafiaVotingSection = ({ socket, players, activeRoom, setMafiaWon }) => {
     const [selectedPlayerId, setSelectedPlayerId] = useState();
@@ -33,9 +34,12 @@ const MafiaVotingSection = ({ socket, players, activeRoom, setMafiaWon }) => {
             <select
                 value={selectedPlayerId}
                 name="voting-select"
-                disabled={confirmed}
                 onChange={(e) => {
-                    if (confirmed) return;
+                    if (confirmed) {
+                        alert(ALERT_MESSAGES.PLAYER_ALREADY_CONFIRMED);
+                        return;
+                    }
+
                     setSelectedPlayerId(e.target.value);
                 }}
             >
@@ -46,18 +50,21 @@ const MafiaVotingSection = ({ socket, players, activeRoom, setMafiaWon }) => {
             </select>
             <button
                 className="form-button"
-                disabled={confirmed}
                 onClick={() => {
-                    if (!selectedPlayerId) {
-                        alert('Для підтвердження виберіть гравця');
+                    if (confirmed) {
+                        alert(ALERT_MESSAGES.PLAYER_ALREADY_CONFIRMED);
                         return;
                     }
-                    if (confirmed) return;
+                    if (!selectedPlayerId) {
+                        alert(ALERT_MESSAGES.CHOOSE_PLAYER);
+                        return;
+                    }
+
                     setConfirmed(true);
                     socket.emit('night_action', { roomId: activeRoom?.id, playerId: selectedPlayerId });
                 }}
             >
-                {confirmed ? 'Підтверджено ✔️' : 'Підтвердити'}
+                {confirmed ? BUTTON_MESSAGES.CONFIRMED : BUTTON_MESSAGES.CONFIRM}
             </button>
         </div>
     );

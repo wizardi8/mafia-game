@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import VotingSection from './VotingSection';
 import MafiaVotingSection from './MafiaVotingSection';
 
+import { ALERT_MESSAGES } from '../constants';
 import { ROLES } from '../../../shared/constants/players';
 import { ROOM_PHASES } from '../../../shared/constants/rooms';
 
@@ -11,8 +12,8 @@ const PlayerActions = ({ socket, activeRoom, currentRole, players, activePlayer 
 
     switch (currentRole) {
         case ROLES.MAFIA: {
-            if (mafiaWon) return <div>Немає активних мирних жителів. Ви виграли! 🎉</div>;
-            if (!activePlayer?.alive) return <div>Вас було вбито ☠️</div>;
+            if (mafiaWon) return <div>{ALERT_MESSAGES.NO_CITIZEN_FOR_MAFIA}</div>;
+            if (!activePlayer?.alive) return <div>{ALERT_MESSAGES.YOU_HAVE_BEEN_KILLED}</div>;
             if (activeRoom?.currentPhase === ROOM_PHASES.DAY) {
                 return <VotingSection
                     socket={socket}
@@ -30,8 +31,8 @@ const PlayerActions = ({ socket, activeRoom, currentRole, players, activePlayer 
             />;
         }
         case ROLES.CITIZEN: {
-            if (mafiaWon) return <div>Немає активних мирних жителів. Мафія виграла! 😎</div>;
-            if (!activePlayer?.alive) return <div>Вас було вбито ☠️</div>;
+            if (mafiaWon) return <div>{ALERT_MESSAGES.NO_CITIZEN_FOR_CITIZEN}</div>;
+            if (!activePlayer?.alive) return <div>{ALERT_MESSAGES.YOU_HAVE_BEEN_KILLED}</div>;
             if (activeRoom?.currentPhase === ROOM_PHASES.DAY) {
                 return (
                     <VotingSection
@@ -43,7 +44,7 @@ const PlayerActions = ({ socket, activeRoom, currentRole, players, activePlayer 
                 );
             }
 
-            return <div>(Зараз ходить мафія)</div>;
+            return <div>({ALERT_MESSAGES.NIGHT_MOVE})</div>;
         }
         default: {
             return null;

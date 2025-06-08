@@ -19,9 +19,8 @@ import { getRoom } from '../api/rooms';
 import GamePage from './GamePage';
 import RoomsList from './RoomsList';
 
-import { MODAL_TYPES } from '../constants';
 import { ROOM_STATUSES } from '../../../shared/constants/rooms';
-import { WINNER_NAMES, WINNERS } from '../../../shared/constants/players';
+import { ALERT_MESSAGES, BUTTON_MESSAGES, getWinnerText, MODAL_TYPES } from '../constants';
 
 const MainPage = () => {
     const dispatch = useDispatch();
@@ -65,10 +64,13 @@ const MainPage = () => {
             getRoom(activeRoomId).then((response) => {
                 const room = response.data;
 
-                if (!room) alert('Something went wrong!');
+                if (!room) {
+                    alert(ALERT_MESSAGES.SOMETHING_WENT_WRONG);
+                    return;
+                }
                 if (room.status !== ROOM_STATUSES.WAITING) {
                     dispatch(setActiveRoomId(null));
-                    alert('Вибачте, гра вже триває');
+                    alert(ALERT_MESSAGES.GAME_ALREADY_STARTED);
                     return;
                 }
 
@@ -96,9 +98,7 @@ const MainPage = () => {
                         case 'player_eliminated': {
                             if (winner) {
                                 dispatch(setGameData({ currentRole: null }));
-                                alert(`Гра завершена! Переможці: ${WINNER_NAMES[winner]} ${winner === WINNERS.CITIZENS
-                                    ? '👱🏼‍♂️'
-                                    : '🧛🏾'}`);
+                                alert(getWinnerText(winner));
                             } else {
                                 dispatch(updateActivePlayer({ id: playerId, data: { alive: false } }));
                             }
@@ -125,12 +125,17 @@ const MainPage = () => {
         <div className="page">
             <div className="header">
                 <div className="page-logo">Mafia UA</div>
-                <div className="header-user-name">{playerName}</div>
-                <button className="form-button" onClick={() => {
-                    dispatch(setModal({ modalType: MODAL_TYPES.SETTINGS, modalProps: { playerId: activePlayerId } }));
-                }}>
-                    ⚙️
-                </button>
+                <div className="header-right-section">
+                    <div className="header-user-name">{playerName}</div>
+                    <button className="form-button" onClick={() => {
+                        dispatch(setModal({
+                            modalType: MODAL_TYPES.SETTINGS,
+                            modalProps: { playerId: activePlayerId },
+                        }));
+                    }}>
+                        {BUTTON_MESSAGES.SETTINGS}
+                    </button>
+                </div>
             </div>
             <div className="main-section">
                 {activeRoomId

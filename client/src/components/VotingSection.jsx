@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { ALERT_MESSAGES, BUTTON_MESSAGES } from '../constants';
 
 const VotingSection = ({ socket, players, activeRoom, activePlayer }) => {
     const [selectedPlayerId, setSelectedPlayerId] = useState();
@@ -19,9 +20,12 @@ const VotingSection = ({ socket, players, activeRoom, activePlayer }) => {
             <select
                 value={selectedPlayerId}
                 name="voting-select"
-                disabled={confirmed}
                 onChange={(e) => {
-                    if (confirmed) return;
+                    if (confirmed) {
+                        alert(ALERT_MESSAGES.PLAYER_ALREADY_CONFIRMED);
+                        return;
+                    }
+
                     setSelectedPlayerId(e.target.value);
                 }}
             >
@@ -32,13 +36,16 @@ const VotingSection = ({ socket, players, activeRoom, activePlayer }) => {
             </select>
             <button
                 className="form-button"
-                disabled={confirmed}
                 onClick={() => {
-                    if (!selectedPlayerId) {
-                        alert('Для підтвердження виберіть гравця');
+                    if (confirmed) {
+                        alert(ALERT_MESSAGES.PLAYER_ALREADY_CONFIRMED);
                         return;
                     }
-                    if (confirmed) return;
+                    if (!selectedPlayerId) {
+                        alert(ALERT_MESSAGES.CHOOSE_PLAYER);
+                        return;
+                    }
+
                     setConfirmed(true);
                     socket.emit('vote', {
                         roomId: activeRoom?.id,
@@ -48,7 +55,7 @@ const VotingSection = ({ socket, players, activeRoom, activePlayer }) => {
                     });
                 }}
             >
-                {confirmed ? 'Підтверджено ✔️' : 'Підтвердити'}
+                {confirmed ? BUTTON_MESSAGES.CONFIRMED : BUTTON_MESSAGES.CONFIRM}
             </button>
         </div>
     );

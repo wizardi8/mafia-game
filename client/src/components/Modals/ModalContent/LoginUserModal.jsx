@@ -6,7 +6,7 @@ import Modal from 'react-modal';
 
 import { getUserHasAccess } from '../../../api/users';
 
-import { CUSTOM_STYLES } from '../../../constants';
+import { ALERT_MESSAGES, BUTTON_MESSAGES, CUSTOM_STYLES } from '../../../constants';
 
 const LoginUserModal = ({ closeModal }) => {
     const dispatch = useDispatch();
@@ -15,7 +15,7 @@ const LoginUserModal = ({ closeModal }) => {
 
     const onLogin = () => {
         if (!passwordValue) {
-            alert('No password');
+            alert(ALERT_MESSAGES.NO_PASSWORD);
             return;
         }
 
@@ -29,11 +29,11 @@ const LoginUserModal = ({ closeModal }) => {
                     return;
                 }
 
-                alert('[Error] Password is incorrect');
+                alert(ALERT_MESSAGES.INCORRECT_PASSWORD);
             })
             .catch((error) => {
                 console.log(error);
-                alert('[Error] Something went wrong');
+                alert(ALERT_MESSAGES.SOMETHING_WENT_WRONG);
             });
     };
 
@@ -48,7 +48,7 @@ const LoginUserModal = ({ closeModal }) => {
             }} />
             <div className="login-user-modal-buttons">
                 <button className="form-button" onClick={onLogin}>
-                    Next
+                    {BUTTON_MESSAGES.NEXT}
                 </button>
             </div>
         </div>

@@ -15,6 +15,7 @@ import PlayersList from './PlayersList';
 import PlayerActions from './PlayerActions';
 import LoadingCenterSpinner from './LoadingCenterSpinner';
 
+import { ALERT_MESSAGES, BUTTON_MESSAGES } from '../constants';
 import { PLAYERS_MIN_LIMIT, PLAYERS_TOTAL_LIMIT, ROLE_NAMES, ROLES } from '../../../shared/constants/players';
 import { ROOM_PHASE_NAMES, ROOM_PHASES, ROOM_STATUS_NAMES, ROOM_STATUSES } from '../../../shared/constants/rooms';
 
@@ -71,18 +72,24 @@ const GamePage = ({ activeRoom, socket }) => {
                                 socket.disconnect();
                                 window.location.reload();
                             }}>
-                                {activeRoom?.status === ROOM_STATUSES.IN_GAME ? 'Залишити гру ↩️' : 'Залишити кімнату ↩️'}
+                                {activeRoom?.status === ROOM_STATUSES.IN_GAME
+                                    ? BUTTON_MESSAGES.LEAVE_GAME
+                                    : BUTTON_MESSAGES.LEAVE_ROOM}
                             </button>
                             {activeRoom?.status === ROOM_STATUSES.WAITING ? (
                                 <button
                                     className="form-button"
-                                    disabled={isDisabledStartGame}
-                                    title={isDisabledStartGame ? `Щоб почати гру повинно бути мінімум ${PLAYERS_MIN_LIMIT} гравці` : ''}
+                                    title={isDisabledStartGame ? ALERT_MESSAGES.PLAYERS_MIN_LIMIT : ''}
                                     onClick={() => {
+                                        if (isDisabledStartGame) {
+                                            alert(ALERT_MESSAGES.PLAYERS_MIN_LIMIT);
+                                            return;
+                                        }
+
                                         socket.emit('start_game', { roomId: activeRoomId });
                                     }}
                                 >
-                                    Почати гру ▶️
+                                    {BUTTON_MESSAGES.START_GAME}
                                 </button>
                             ) : null}
                         </div>
@@ -102,7 +109,9 @@ const GamePage = ({ activeRoom, socket }) => {
                             </div>
                         </>)
                         : (<>
-                            <div>{isDisabledStartGame ? (`(Щоб почати гру повинно бути мінімум ${PLAYERS_MIN_LIMIT} гравці)`) : ('(Почніть, будь ласка, гру ▶️)')}</div>
+                            <div>{isDisabledStartGame
+                                ? (`(${ALERT_MESSAGES.PLAYERS_MIN_LIMIT})`)
+                                : (`(${ALERT_MESSAGES.START_GAME})`)}</div>
                         </>)}
                 </div>
                 <PlayerActions

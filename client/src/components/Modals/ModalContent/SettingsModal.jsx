@@ -5,7 +5,7 @@ import { setActivePlayerName, updateActivePlayer } from '../../../store/reducers
 
 import Modal from 'react-modal';
 
-import { CUSTOM_STYLES } from '../../../constants';
+import { ALERT_MESSAGES, BUTTON_MESSAGES, CUSTOM_STYLES } from '../../../constants';
 
 const SettingsModal = ({ closeModal, modalProps = {} }) => {
     const dispatch = useDispatch();
@@ -18,7 +18,7 @@ const SettingsModal = ({ closeModal, modalProps = {} }) => {
 
     const onClick = () => {
         if (!nameValue) {
-            alert('Введіть, будь ласка, ваше ім\'я');
+            alert(ALERT_MESSAGES.ENTER_PLAYER_NAME);
             return;
         }
 
@@ -37,7 +37,7 @@ const SettingsModal = ({ closeModal, modalProps = {} }) => {
     };
 
     if (playerId) {
-        alert('Щоб відкрити налаштування, спочатку залиште кімнату ↩️');
+        alert(ALERT_MESSAGES.CANNOT_OPEN_SETTINGS);
         return null;
     }
 
@@ -53,11 +53,11 @@ const SettingsModal = ({ closeModal, modalProps = {} }) => {
             <div className="settings-modal-buttons">
                 {playerName ? (
                     <button className="form-button" onClick={() => closeModal()}>
-                        Закрити
+                        {BUTTON_MESSAGES.CLOSE}
                     </button>
                 ) : null}
                 <button className="form-button" onClick={onClick}>
-                    Зберегти
+                    {BUTTON_MESSAGES.SAVE}
                 </button>
             </div>
         </div>

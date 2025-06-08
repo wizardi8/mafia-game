@@ -8,6 +8,7 @@ import { getAllRooms } from '../api/rooms';
 import LoadingCenterSpinner from './LoadingCenterSpinner';
 
 import { PLAYERS_TOTAL_LIMIT } from '../../../shared/constants/players';
+import { ALERT_MESSAGES, BUTTON_MESSAGES, ROOMS_TABLE } from '../constants';
 import { ROOM_STATUS_NAMES, ROOM_STATUSES } from '../../../shared/constants/rooms';
 
 const RoomsList = () => {
@@ -58,7 +59,7 @@ const RoomsList = () => {
                     <button className="form-button" onClick={() => {
                         setSearchValue('');
                     }}>
-                        Очистити
+                        {BUTTON_MESSAGES.CLEAR}
                     </button>
                 </div>
                 {filteredRooms.length
@@ -67,9 +68,9 @@ const RoomsList = () => {
                             <table>
                                 <thead>
                                 <tr>
-                                    <th>Назва кімнати</th>
-                                    <th>Статус гри</th>
-                                    <th>Кількість гравців</th>
+                                    <th>{ROOMS_TABLE.NAME}</th>
+                                    <th>{ROOMS_TABLE.STATUS}</th>
+                                    <th>{ROOMS_TABLE.PLAYERS_COUNT}</th>
                                     <th></th>
                                 </tr>
                                 </thead>
@@ -95,15 +96,23 @@ const RoomsList = () => {
                                                 <button
                                                     className="form-button"
                                                     onClick={() => {
-                                                        if (isDisabled) return;
+                                                        if (isDisabled) {
+                                                            if (isGameStarted) alert(ALERT_MESSAGES.GAME_ALREADY_STARTED);
+                                                            if (isLimit) alert(ALERT_MESSAGES.NO_AVAILABLE_PLACES);
+
+                                                            return;
+                                                        }
 
                                                         dispatch(updateActiveRoom({ id, data: roomData }));
                                                         dispatch(setActiveRoomId(id));
                                                     }}
-                                                    disabled={isDisabled}
-                                                    title={isLimit ? 'Немає вільних місць' : isGameStarted ? 'Гра вже почалась' : ''}
+                                                    title={isLimit
+                                                        ? ALERT_MESSAGES.NO_AVAILABLE_PLACES
+                                                        : isGameStarted ? ALERT_MESSAGES.GAME_STARTED : ''}
                                                 >
-                                                    {isDisabled ? '❌' : 'Підключитись 🌐'}
+                                                    {isDisabled
+                                                        ? BUTTON_MESSAGES.CANNOT_CONNECT
+                                                        : BUTTON_MESSAGES.CONNECT_TO_ROOM}
                                                 </button>
                                             </div>
                                         </td>
@@ -113,7 +122,7 @@ const RoomsList = () => {
                             </table>
                         </div>
                     )
-                    : <span>Немає кімнат</span>}
+                    : <span>{ALERT_MESSAGES.NO_ROOMS}</span>}
             </>
         ) : (
             <LoadingCenterSpinner />

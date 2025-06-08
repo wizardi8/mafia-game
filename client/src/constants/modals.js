@@ -11,6 +11,7 @@ export const CUSTOM_STYLES = {
         bottom: 'auto',
         marginRight: '-50%',
         background: '#162831',
+        inset: '30% auto auto 50%',
         border: '1px solid #484c51',
         transform: 'translate(-50%, -50%)',
     },
