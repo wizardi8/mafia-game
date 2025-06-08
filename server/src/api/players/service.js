@@ -20,6 +20,10 @@ class PlayersService {
         return PlayersModel.update({ id, data });
     }
 
+    static async updateMany({ roomId, data }) {
+        return PlayersModel.updateMany({ roomId, data });
+    }
+
     static async create({ data = {} }) {
         return PlayersModel.create(data);
     }

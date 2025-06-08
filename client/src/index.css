@@ -213,6 +213,7 @@ body #root {
 .voting-section select {
     min-width: 20vw;
     width: 100%;
+    max-width: 30vw;
     height: 38px;
 }
 

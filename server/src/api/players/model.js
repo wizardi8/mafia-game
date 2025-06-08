@@ -17,6 +17,10 @@ class PlayersModel {
         return MongoDB.getInstance()?.collections.players.updateOne({ id }, { $set: data });
     }
 
+    static updateMany({ roomId, data }) {
+        return MongoDB.getInstance()?.collections.players.updateMany({ roomId }, { $set: data });
+    }
+
     static create(data) {
         return MongoDB.getInstance()?.collections.players.insertOne(data);
     }

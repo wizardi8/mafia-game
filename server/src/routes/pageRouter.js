@@ -6,7 +6,6 @@ const router = express.Router();
 
 router.get('/favicon.ico', (req, res) => {
     res.setHeader('Content-Type', 'image/x-icon');
-    // TODO favicon
     fs.createReadStream(path.join(__dirname, '../../../', 'client', 'public', 'favicon.ico')).pipe(res);
 });
 

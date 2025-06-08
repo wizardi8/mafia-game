@@ -222,12 +222,9 @@ const initSockets = (app) => {
                 const winner = checkGameEnd(room, roomPlayers);
 
                 if (winner) {
-                    room.players.forEach((id) => {
-                        // TODO update many
-                        PlayersService.update({
-                            id,
-                            data: { alive: true },
-                        });
+                    await PlayersService.updateMany({
+                        roomId,
+                        data: { alive: true },
                     });
                 }
 
