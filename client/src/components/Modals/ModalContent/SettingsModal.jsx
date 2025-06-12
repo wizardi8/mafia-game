@@ -45,12 +45,12 @@ const SettingsModal = ({ closeModal, modalProps = {} }) => {
         isOpen={true}
         style={CUSTOM_STYLES}
     >
-        <div className="settings-modal">
+        <div className="modal">
             <div>Ваше ім'я:</div>
             <input type="text" name="name" value={nameValue} onChange={(e) => {
                 setNameValue(e.target.value);
             }} />
-            <div className="settings-modal-buttons">
+            <div className="modal-buttons">
                 {playerName ? (
                     <button className="form-button" onClick={() => closeModal()}>
                         {BUTTON_MESSAGES.CLOSE}

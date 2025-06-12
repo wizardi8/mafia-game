@@ -89,7 +89,7 @@ body #root {
 }
 
 .search-section input,
-.settings-modal input,
+.modal input,
 .voting-section select {
     color: inherit;
     background: #161a1f;
@@ -98,7 +98,7 @@ body #root {
     padding: 0 8px;
 }
 
-.settings-modal input {
+.modal input {
     line-height: 34px;
 }
 
@@ -134,13 +134,13 @@ body #root {
     justify-content: space-around;
 }
 
-.login-user-modal, .settings-modal {
+.login-user-modal, .modal {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-.login-user-modal-buttons, .settings-modal-buttons {
+.login-user-modal-buttons, .modal-buttons {
     display: flex;
     flex-direction: row;
     justify-content: end;

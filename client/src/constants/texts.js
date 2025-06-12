@@ -23,15 +23,14 @@ export const ALERT_MESSAGES = {
 };
 
 export const getWinnerText = (winner) => {
-    return `Гра завершена! Переможці: ${WINNER_NAMES[winner]} ${winner === WINNERS.CITIZENS
-        ? '👱🏼‍♂️'
-        : '🧛🏾'}`;
+    return `${WINNER_NAMES[winner]} ${winner === WINNERS.CITIZENS ? '👱🏼‍♂️' : '🧛🏾'}`;
 };
 
 export const BUTTON_MESSAGES = {
     LEAVE_GAME: 'Залишити гру ↩️',
     LEAVE_ROOM: 'Залишити кімнату ↩️',
     START_GAME: 'Почати гру ▶️',
+    HISTORY_GAME: 'Історія гри 🕒',
     CONFIRM: 'Підтвердити',
     CONFIRMED: 'Підтверджено ✔️',
     CLEAR: 'Очистити',

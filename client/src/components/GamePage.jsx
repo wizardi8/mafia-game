@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { setModal } from '../store/reducers/modalReducer';
 import { setPlayers } from '../store/reducers/playersReducer';
 import {
     getActivePlayerId,
@@ -15,7 +16,7 @@ import PlayersList from './PlayersList';
 import PlayerActions from './PlayerActions';
 import LoadingCenterSpinner from './LoadingCenterSpinner';
 
-import { ALERT_MESSAGES, BUTTON_MESSAGES } from '../constants';
+import { ALERT_MESSAGES, BUTTON_MESSAGES, MODAL_TYPES } from '../constants';
 import { PLAYERS_MIN_LIMIT, PLAYERS_TOTAL_LIMIT, ROLE_NAMES, ROLES } from '../../../shared/constants/players';
 import { ROOM_PHASE_NAMES, ROOM_PHASES, ROOM_STATUS_NAMES, ROOM_STATUSES } from '../../../shared/constants/rooms';
 
@@ -90,6 +91,19 @@ const GamePage = ({ activeRoom, socket }) => {
                                     }}
                                 >
                                     {BUTTON_MESSAGES.START_GAME}
+                                </button>
+                            ) : null}
+                            {activeRoom?.status === ROOM_STATUSES.IN_GAME ? (
+                                <button
+                                    className="form-button"
+                                    onClick={() => {
+                                        dispatch(setModal({
+                                            modalType: MODAL_TYPES.HISTORY_GAME,
+                                            modalProps: { history: activeRoom?.history },
+                                        }));
+                                    }}
+                                >
+                                    {BUTTON_MESSAGES.HISTORY_GAME}
                                 </button>
                             ) : null}
                         </div>

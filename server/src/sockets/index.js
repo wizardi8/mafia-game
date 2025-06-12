@@ -205,7 +205,13 @@ const initSockets = (app) => {
             const playerCount = activePlayers.length;
 
             if (totalVotes >= playerCount) {
-                const [eliminatedId] = Object.entries(room.votes).sort((a, b) => b[1] - a[1])[0];
+                const mostVoted = Object.entries(room.votes).reduce((max, [key, voters]) => {
+                    return voters.length > max.count
+                        ? { key, count: voters.length }
+                        : max;
+                }, { key: null, count: 0 });
+
+                const eliminatedId = mostVoted.key;
 
                 room.votes = {};
                 room.currentPhase = ROOM_PHASES.NIGHT;
@@ -242,6 +248,7 @@ const initSockets = (app) => {
                     key: 'player_eliminated',
                     playerId: eliminatedId,
                     roomData: newRoomData,
+                    roles: room.roles,
                     winner,
                 });
             }

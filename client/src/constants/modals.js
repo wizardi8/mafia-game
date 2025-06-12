@@ -1,6 +1,8 @@
 export const MODAL_TYPES = {
     SETTINGS: 'settings',
     LOGIN_USER: 'loginUser',
+    HISTORY_GAME: 'historyGame',
+    END_GAME_INFO: 'endGameInfo',
 };
 
 export const CUSTOM_STYLES = {

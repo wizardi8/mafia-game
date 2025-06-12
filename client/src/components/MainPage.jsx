@@ -21,7 +21,7 @@ import GamePage from './GamePage';
 import RoomsList from './RoomsList';
 
 import { ROOM_STATUSES } from '../../../shared/constants/rooms';
-import { ALERT_MESSAGES, BUTTON_MESSAGES, getWinnerText, MODAL_TYPES } from '../constants';
+import { ALERT_MESSAGES, BUTTON_MESSAGES, MODAL_TYPES } from '../constants';
 
 const MainPage = () => {
     const dispatch = useDispatch();
@@ -78,7 +78,7 @@ const MainPage = () => {
                 socket.emit('join_room', { roomId: activeRoomId, playerName });
 
                 socket.on('game_update', (data = {}) => {
-                    const { key, playerId, role, winner, roomData = {}, playerData = {} } = data || {};
+                    const { key, playerId, role, winner, roles, roomData = {}, playerData = {} } = data || {};
                     const { id } = roomData || {};
                     const { name } = playerData || {};
                     console.log(data);
@@ -99,7 +99,7 @@ const MainPage = () => {
                         case 'player_eliminated': {
                             if (winner) {
                                 dispatch(setGameData({ currentRole: null }));
-                                alert(getWinnerText(winner));
+                                dispatch(setModal({ modalType: MODAL_TYPES.END_GAME_INFO, modalProps: { winner, roles } }));
                             } else {
                                 dispatch(updateActivePlayer({ id: playerId, data: { alive: false } }));
                             }

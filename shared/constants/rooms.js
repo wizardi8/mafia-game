@@ -23,7 +23,7 @@ const ROOM_PHASE_NAMES = {
 const DEFAULT_ROOM = {
     status: ROOM_STATUSES.WAITING,
     currentPhase: ROOM_PHASES.NIGHT,
-    roles: [],
+    roles: {},
     votes: {},
     history: [],
 };
